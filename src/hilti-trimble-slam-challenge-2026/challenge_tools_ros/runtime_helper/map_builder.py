@@ -186,7 +186,11 @@ class MapBuilder(Node):
         
         msg.data = grid_data.tolist()
         self.map_publisher.publish(msg)
-    def save_pcd_map(self, file_path='/home/kirill_fdx/ros2_ws/data/map.pcd'):
+    def save_pcd_map(self):
+        # Читаем путь из bash-скрипта, или используем локальный
+        import os
+        file_path = os.environ.get('MAP_OUT_PATH', './data/map.pcd')
+        
         """Сохраняет накопленное облако точек в PCD файл перед выходом."""
         if self.global_points.shape[0] > 0:
             self.get_logger().info(f'Сохранение карты из {self.global_points.shape[0]} точек...')

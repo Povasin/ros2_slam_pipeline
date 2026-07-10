@@ -6,12 +6,10 @@ from rclpy.serialization import deserialize_message
 from sensor_msgs.msg import Image, CompressedImage
 import rosbag2_py
 
-# ================= НАСТРОЙКИ ПУТЕЙ =================
-BAG_PATH = os.environ.get('BAG_PATH', '/home/kirill_fdx/ros2_ws/data/floor_1/2025-05-05/run_1/rosbag_pano')
-TRAJ_PATH = os.environ.get('TRAJ_PATH', '/home/kirill_fdx/ros2_ws/data/trajectory_floor_1.txt')
-OUT_IMG_DIR = os.environ.get('OUT_IMG_DIR', '/home/kirill_fdx/ros2_ws/dataset/floor_1/images')
-OUT_CSV = os.environ.get('OUT_CSV', '/home/kirill_fdx/ros2_ws/dataset/floor_1/sync_index.csv')
-IMAGE_TOPIC = '/pano/image_raw/compressed'
+BAG_PATH = os.environ.get('BAG_PATH', './data/floor_1/2025-05-05/run_1/rosbag_pano')
+TRAJ_PATH = os.environ.get('TRAJ_PATH', './data/trajectory_floor_1.txt')
+OUT_IMG_DIR = os.environ.get('OUT_IMG_DIR', './dataset/floor_1/images')
+OUT_CSV = os.environ.get('OUT_CSV', './dataset/floor_1/sync_index.csv')
 
 def main():
     print("1. Создаем папки для датасета...")

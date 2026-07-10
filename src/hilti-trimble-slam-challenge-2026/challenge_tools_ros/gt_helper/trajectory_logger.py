@@ -10,7 +10,7 @@ class TrajectoryLogger(Node):
         
         # Объявляем параметры
         self.declare_parameter('topic', '/ov_msckf/odomimu')
-        self.declare_parameter('file_path', '/home/kirill_fdx/ros2_ws/data/trajectory.txt')
+        self.declare_parameter('file_path', './data/trajectory.txt')
         
         # Получаем значения параметров
         topic_name = self.get_parameter('topic').value

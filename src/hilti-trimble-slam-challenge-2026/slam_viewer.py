@@ -10,13 +10,15 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 
 # ================= НАСТРОЙКИ ПУТЕЙ =================
-CSV_PATH = os.environ.get('OUT_CSV', '/home/kirill_fdx/ros2_ws/dataset/floor_1/sync_index.csv')
+WS_DIR = os.environ.get('WS_DIR', '.') # Корень проекта
+CSV_PATH = os.environ.get('OUT_CSV', os.path.join(WS_DIR, 'dataset/floor_1/sync_index.csv'))
 
-list_of_maps = glob.glob('/home/kirill_fdx/ros2_ws/data/map_*.pcd')
+# Ищем карты в папке data относительно корня проекта
+list_of_maps = glob.glob(os.path.join(WS_DIR, 'data/map_*.pcd'))
 if list_of_maps:
     PCD_MAP_PATH = max(list_of_maps, key=os.path.getctime)
 else:
-    PCD_MAP_PATH = '/home/kirill_fdx/ros2_ws/data/map.pcd'
+    PCD_MAP_PATH = os.path.join(WS_DIR, 'data/map.pcd')
 # ===================================================
 
 class SLAMViewer(QMainWindow):
