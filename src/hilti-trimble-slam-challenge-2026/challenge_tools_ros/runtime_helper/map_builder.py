@@ -59,7 +59,6 @@ class MapBuilder(Node):
         )
 
         # Массив для хранения агрегированных глобальных точек
-        # Инициализируем правильно как пустой 2D массив 0x3, чтобы vstack работал корректно
         self.global_points = np.empty((0, 3), dtype=np.float32)
 
     def extract_bev(self, points: np.ndarray) -> np.ndarray:
@@ -124,9 +123,6 @@ class MapBuilder(Node):
                 skip_nans=True
             )
             
-            # 2. ПРИНУДИТЕЛЬНАЯ РАСПАКОВКА:
-            # Достаем чисто цифры и игнорируем "подписи" ROS 2.
-            # Превращаем каждую точку в обычный список [x, y, z]
             unpacked_points = [[p[0], p[1], p[2]] for p in points_iter]
             
             if not unpacked_points:
@@ -207,13 +203,18 @@ def main(args=None):
     node = MapBuilder()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
-        # Срабатывает, когда ты нажимаешь Ctrl+C в терминале
-        node.get_logger().info('Остановка ноды. Сохраняем данные...')
-        node.save_pcd_map() # <-- Вызов сохранения
+    except BaseException:
+        # Перехватываем KeyboardInterrupt, ExternalShutdownException и другие системные сигналы
+        pass
     finally:
+        # Гарантированное сохранение при любом варианте остановки
+        node.get_logger().info('Остановка ноды. Сохраняем данные...')
+        node.save_pcd_map() 
         node.destroy_node()
-        rclpy.shutdown()
+        try:
+            rclpy.shutdown()
+        except Exception:
+            pass # Игнорируем ошибку "rcl_shutdown already called", если ROS 2 уже закрыл контекст
 
 if __name__ == '__main__':
     main()

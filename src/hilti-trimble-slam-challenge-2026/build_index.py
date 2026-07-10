@@ -7,13 +7,11 @@ from sensor_msgs.msg import Image, CompressedImage
 import rosbag2_py
 
 # ================= НАСТРОЙКИ ПУТЕЙ =================
-# Берем пути из bash-скрипта. Если запускаем вручную, сработают пути по умолчанию
 BAG_PATH = os.environ.get('BAG_PATH', '/home/kirill_fdx/ros2_ws/data/floor_1/2025-05-05/run_1/rosbag_pano')
 TRAJ_PATH = os.environ.get('TRAJ_PATH', '/home/kirill_fdx/ros2_ws/data/trajectory_floor_1.txt')
 OUT_IMG_DIR = os.environ.get('OUT_IMG_DIR', '/home/kirill_fdx/ros2_ws/dataset/floor_1/images')
 OUT_CSV = os.environ.get('OUT_CSV', '/home/kirill_fdx/ros2_ws/dataset/floor_1/sync_index.csv')
 IMAGE_TOPIC = '/pano/image_raw/compressed'
-# ===================================================
 
 def main():
     print("1. Создаем папки для датасета...")
@@ -93,7 +91,6 @@ def main():
             decode_errors += 1
             continue
 
-        # БИНАРНЫЙ ПОИСК (Ускоряет поиск в 100 раз)
         idx = np.searchsorted(timestamps, msg_time)
         
         if idx == 0:
@@ -110,7 +107,6 @@ def main():
         if min_diff < lowest_diff:
             lowest_diff = min_diff
 
-        # ЕСЛИ РАЗНИЦА МЕНЬШЕ 0.1 СЕК (идеальное совпадение)
         if min_diff < 0.1:
             img_name = f"frame_{img_counter:05d}.jpg"
             img_path = os.path.join(OUT_IMG_DIR, img_name)

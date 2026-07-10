@@ -5,15 +5,13 @@ import cv2
 import numpy as np
 import pandas as pd
 import open3d as o3d
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                             QHBoxLayout, QSlider, QLabel, QPushButton)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSlider, QLabel, QPushButton)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 
 # ================= НАСТРОЙКИ ПУТЕЙ =================
 CSV_PATH = os.environ.get('OUT_CSV', '/home/kirill_fdx/ros2_ws/dataset/floor_1/sync_index.csv')
 
-# Автоматически находим самую свежую карту, которую только что создал map_builder
 list_of_maps = glob.glob('/home/kirill_fdx/ros2_ws/data/map_*.pcd')
 if list_of_maps:
     PCD_MAP_PATH = max(list_of_maps, key=os.path.getctime)
@@ -40,7 +38,7 @@ class SLAMViewer(QMainWindow):
         self.vis = o3d.visualization.Visualizer()
         self.vis.create_window(window_name="3D Map (Open3D)", width=800, height=600)
         
-        # Настройка фона карты (сделаем темно-серым для контраста)
+        # Настройка фона карты
         opt = self.vis.get_render_option()
         opt.background_color = np.asarray([0.1, 0.1, 0.1])
         opt.point_size = 2.0
@@ -54,7 +52,7 @@ class SLAMViewer(QMainWindow):
             print(f"ВНИМАНИЕ: Карта {PCD_MAP_PATH} не найдена. 3D сцена будет пустой (только маркер).")
             self.pcd = None
 
-        # Создаем маркер текущей позиции (красная сфера)
+        # маркер текущей позиции (красная сфера)
         self.marker = o3d.geometry.TriangleMesh.create_sphere(radius=0.3)
         self.marker.paint_uniform_color([1.0, 0.0, 0.0]) # Красный цвет
         
@@ -139,7 +137,6 @@ class SLAMViewer(QMainWindow):
         self.vis.update_geometry(self.marker)
 
     def update_open3d(self):
-        # Этот метод вызывается 30 раз в секунду и не дает окну Open3D зависнуть
         self.vis.poll_events()
         self.vis.update_renderer()
 
