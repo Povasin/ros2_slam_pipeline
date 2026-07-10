@@ -1,0 +1,11 @@
+# Сборка и логи ROS 2
+build/
+install/
+log/
+
+# Виртуальное окружение
+slam_env/
+
+# Тяжелые датасеты и результаты SLAM
+data/
+dataset/

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="my_robot">
+
+    <!-- Фиктивное невесомое корневое звено -->
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.05" rpy="0 0 0"/>
+    </joint>
+    
+    <!-- Главный корпус робота -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="0.4 0.2 0.1"/>
+            </geometry>
+        </visual>
+        <!-- Границы столкновений для физики -->
+        <collision>
+            <geometry>
+                <box size="0.4 0.2 0.1"/>
+            </geometry>
+        </collision>
+        <!-- Масса и инерция -->
+        <inertial>
+            <mass value="1.0"/>
+            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+        </inertial>
+    </link>
+
+    <!-- Подключаем лидар -->
+    <xacro:include filename="lidar.xacro" />
+    
+</robot>
