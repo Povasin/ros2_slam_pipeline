@@ -14,7 +14,7 @@ class TrajectoryLogger(Node):
         
         # Получаем значения параметров
         topic_name = self.get_parameter('topic').value
-        output_file = self.get_parameter('file_path').value
+        output_file = os.environ.get('TRAJ_PATH', self.get_parameter('file_path').value)
         
         # Подготовка файла
         out_dir = os.path.dirname(output_file)
