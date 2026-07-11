@@ -21,8 +21,8 @@
 
 ### 2. Клонирование репозитория
 ```bash
-git clone https://github.com/Povasin/ros2_slam_pipeline.git
-cd ros2_ws
+git clone https://github.com/Povasin/ros2_slam_pipeline.git test_ws
+cd test_ws
 
 ### 3. Подготовка датасета
 Тяжелые файлы .db3 игнорируются в Git. Перед запуском поместите данные от организаторов (rosbag) по следующему пути:
