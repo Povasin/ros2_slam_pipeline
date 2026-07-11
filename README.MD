@@ -36,6 +36,7 @@ ros2_ws/
                     └── rosbag.db3   <-- Поместите файл сюда
 
 ### 4. ЗАПУСК
+chmod +x start.sh run_pipeline.sh
 ./start.sh floor_1 2025-05-05 run_1
 
 1)Что сделает скрипт:
