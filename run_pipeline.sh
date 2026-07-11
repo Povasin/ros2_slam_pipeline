@@ -3,6 +3,9 @@
 # Автоматически определяем текущую директорию (должна быть корнем ros2_ws)
 export WS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Сразу переходим в корень проекта, откуда бы скрипт ни запускался
+cd "$WS_DIR"
+
 FLOOR=${1:-floor_1}
 DATE=${2:-2025-05-05}
 RUN=${3:-run_1}
@@ -12,6 +15,12 @@ echo "====================================="
 echo "🚀 ЗАПУСК ПАЙПЛАЙНА ДЛЯ: $RUN_NAME 🚀"
 echo "Рабочая директория: $WS_DIR"
 echo "====================================="
+
+# Активация ROS 2 (теперь с абсолютным путем для надежности)
+source /opt/ros/jazzy/setup.bash
+source "${WS_DIR}/install/setup.bash"
+rm -f /dev/shm/ros2_shm_* 2>/dev/null
+export WAYLAND_DISPLAY=""
 
 BAG_DIR="${WS_DIR}/data/${FLOOR}/${DATE}/${RUN}/rosbag"
 if [ ! -d "$BAG_DIR" ]; then
@@ -27,15 +36,32 @@ export MAP_OUT_PATH="${WS_DIR}/data/map_${RUN_NAME}.pcd"
 export OUT_IMG_DIR="${WS_DIR}/dataset/${FLOOR}/images"
 export OUT_CSV="${WS_DIR}/dataset/${FLOOR}/sync_index.csv"
 
+# --- АВТОМАТИЧЕСКАЯ СШИВКА ПАНОРАМ ---
+if [ ! -d "$BAG_PATH" ]; then
+    echo "⚠️ Сшитый rosbag (rosbag_pano) не найден. Запускаю автоматическую сшивку через OpenCV..."
+    
+    YAML_PATH="${WS_DIR}/src/hilti-trimble-slam-challenge-2026/config/hilti_openvins/kalibr_imucam_chain.yaml"
+    MASK0_PATH="${WS_DIR}/src/hilti-trimble-slam-challenge-2026/config/hilti_openvins/mask_cam0.png"
+    MASK1_PATH="${WS_DIR}/src/hilti-trimble-slam-challenge-2026/config/hilti_openvins/mask_cam1.png"
+
+    ros2 run challenge_tools_ros image_stitching.py \
+        --bag "$BAG_DIR/" \
+        --yaml "$YAML_PATH" \
+        --mask0 "$MASK0_PATH" \
+        --mask1 "$MASK1_PATH" \
+        --out "$BAG_PATH"
+        # Флаг --use-torch убран, используется классический рендер OpenCV
+
+    if [ ! -d "$BAG_PATH" ]; then
+        echo "🛑 ОШИБКА: Сшивка панорам не удалась!"
+        exit 1
+    fi
+    echo "✅ Сшивка успешно завершена!"
+fi
+
 # Удаляем старые временные файлы
 rm -f "${WS_DIR}/data/map.pcd" 2>/dev/null
 rm -f "${WS_DIR}/data/trajectory.txt" 2>/dev/null
-
-# Активация ROS 2
-source /opt/ros/jazzy/setup.bash
-source install/setup.bash
-rm -f /dev/shm/ros2_shm_* 2>/dev/null
-export WAYLAND_DISPLAY=""
 
 echo "[1/5] Запуск сервера карты ($RUN_NAME)..."
 ros2 launch challenge_tools_ros map_server.launch.py mask:=masks_with_windows run_name:=${RUN_NAME} < /dev/null &
@@ -59,7 +85,6 @@ pkill -INT -f map_builder.py 2>/dev/null
 
 echo "⏳ Идет расчет 3D-карты. Ждем завершения..."
 
-# Ждем пока нода сохранит карту по пути $MAP_OUT_PATH
 COUNTER=0
 while [ ! -f "$MAP_OUT_PATH" ] && [ $COUNTER -lt 30 ]; do
     sleep 1

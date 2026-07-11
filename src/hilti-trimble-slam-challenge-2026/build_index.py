@@ -6,10 +6,21 @@ from rclpy.serialization import deserialize_message
 from sensor_msgs.msg import Image, CompressedImage
 import rosbag2_py
 
-BAG_PATH = os.environ.get('BAG_PATH', './data/floor_1/2025-05-05/run_1/rosbag_pano')
-TRAJ_PATH = os.environ.get('TRAJ_PATH', './data/trajectory_floor_1.txt')
-OUT_IMG_DIR = os.environ.get('OUT_IMG_DIR', './dataset/floor_1/images')
-OUT_CSV = os.environ.get('OUT_CSV', './dataset/floor_1/sync_index.csv')
+# ================= НАСТРОЙКИ ПУТЕЙ =================
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+WS_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '../..'))
+
+DEFAULT_BAG = os.path.join(WS_ROOT, 'data/floor_1/2025-05-05/run_1/rosbag_pano')
+DEFAULT_TRAJ = os.path.join(WS_ROOT, 'data/trajectory_floor_1.txt')
+DEFAULT_IMG_DIR = os.path.join(WS_ROOT, 'dataset/floor_1/images')
+DEFAULT_CSV = os.path.join(WS_ROOT, 'dataset/floor_1/sync_index.csv')
+
+BAG_PATH = os.environ.get('BAG_PATH', DEFAULT_BAG)
+TRAJ_PATH = os.environ.get('TRAJ_PATH', DEFAULT_TRAJ)
+OUT_IMG_DIR = os.environ.get('OUT_IMG_DIR', DEFAULT_IMG_DIR)
+OUT_CSV = os.environ.get('OUT_CSV', DEFAULT_CSV)
+IMAGE_TOPIC = '/pano/image_raw/compressed'
+# ===================================================
 
 def main():
     print("1. Создаем папки для датасета...")
