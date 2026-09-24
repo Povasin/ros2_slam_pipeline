@@ -35,7 +35,7 @@ The goal was not just to run a SLAM algorithm, but to build a **repeatable end-t
 ## Result
 
 <p align="center">
-  <img src="docs/images/challenge-result.jpg" width="950" alt="Hilti SLAM Challenge result with a score of 94.1 out of 100">
+  <img src="pipeline.jpg" width="950" alt="Hilti SLAM Challenge result with a score of 94.1 out of 100">
 </p>
 
 The pipeline achieved a **94.1 / 100 challenge evaluation score**.
@@ -54,7 +54,7 @@ The project includes a custom synchronization viewer that connects:
 - the panoramic frame corresponding to that pose.
 
 <p align="center">
-  <img src="docs/images/slam-viewer.jpg" width="950" alt="Custom SLAM viewer with panoramic frame and reconstructed 3D point cloud">
+  <img src="windy.jpg" width="950" alt="Custom SLAM viewer with panoramic frame and reconstructed 3D point cloud">
 </p>
 
 The red marker shows the current estimated position inside the point cloud, while the camera image is updated according to the selected trajectory timestamp.
